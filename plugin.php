@@ -11,21 +11,25 @@
 class PhileAnalytics extends \Phile\Plugin\AbstractPlugin implements \Phile\EventObserverInterface {
 
     private $config;
-    private $twig_vars;
     private $googleTrackingId;
 
     public function __construct() {
         \Phile\Event::registerEvent('config_loaded', $this);
         \Phile\Event::registerEvent('before_render_template', $this);
         $this->config = \Phile\Registry::get('Phile_Settings');
-        $this->twig_vars = \Phile\Registry::get('templateVars');
     }
 
     public function on($eventKey, $data = null) {
         if ($eventKey == 'config_loaded' && isset($this->config['google_tracking_id'])) {
                 $this->googleTrackingId = $this->config['google_tracking_id'];
         } else if ($eventKey == 'before_render_template' && !empty($this->googleTrackingId)) {
-                $this->twig_vars['googletrackingcode'] = '<script type="text/javascript">
+                if (\Phile\Registry::isRegistered('templateVars')) {
+                    $twig_vars = \Phile\Registry::get('templateVars');
+                } else {
+                    $twig_vars = array();
+                }
+ 
+                $twig_vars['googletrackingcode'] = '<script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push([\'_setAccount\', \'' . $this->googleTrackingId . '\']);
             _gaq.push([\'_trackPageview\']);
@@ -35,7 +39,7 @@ class PhileAnalytics extends \Phile\Plugin\AbstractPlugin implements \Phile\Even
                 var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);
             })();
         </script>';
-                \Phile\Registry::set('templateVars', $this->twig_vars);
+                \Phile\Registry::set('templateVars', $twig_vars);
         } 
     }
 }
