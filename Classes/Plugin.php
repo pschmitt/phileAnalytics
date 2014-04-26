@@ -1,14 +1,19 @@
 <?php
 
+namespace Phile\Plugin\Pschmitt\Analytics;
+
 /**
- * The file description. *
- * @package Phile
- * @subpackage PhileAnalytics
- * @version 1.0.0
- * @author Philipp Schmitt <philipp@schmitt.co>
- *
- */
-class PhileAnalytics extends \Phile\Plugin\AbstractPlugin implements \Phile\EventObserverInterface {
+* Google Analytics plugin for Phile
+*
+* @version 1.0.1
+* @author  Philipp Schmitt <philipp@schmitt.co>
+* @link    https://github.com/pschmitt/phileAnalytics
+* @license http://opensource.org/licenses/MIT
+* @package Phile\Plugin\Pschmitt\Analytics
+*
+*/
+
+class Plugin extends \Phile\Plugin\AbstractPlugin implements \Phile\Gateway\EventObserverInterface {
 
     private $config;
     private $googleTrackingId;
@@ -28,7 +33,7 @@ class PhileAnalytics extends \Phile\Plugin\AbstractPlugin implements \Phile\Even
                 } else {
                     $twig_vars = array();
                 }
- 
+
                 $twig_vars['googletrackingcode'] = '<script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push([\'_setAccount\', \'' . $this->googleTrackingId . '\']);
@@ -40,6 +45,6 @@ class PhileAnalytics extends \Phile\Plugin\AbstractPlugin implements \Phile\Even
             })();
         </script>';
                 \Phile\Registry::set('templateVars', $twig_vars);
-        } 
+        }
     }
 }
